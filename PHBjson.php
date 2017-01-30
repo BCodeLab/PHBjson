@@ -35,7 +35,7 @@ class PHBjson implements ArrayAccess, Iterator, Countable {
             return NULL;
         }
         if (isset($this->_obj[$field]) && is_array($this->_obj[$field])) {
-            return new jsonField($this->_obj[$field]);
+            return new PHBjson($this->_obj[$field]);
         }
         return $this->_obj[$field];
     }
