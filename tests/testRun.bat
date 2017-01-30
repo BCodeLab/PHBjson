@@ -1,0 +1,1 @@
+phpunit --verbose testPhBjson.php > testResult.txt
