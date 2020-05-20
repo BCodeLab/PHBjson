@@ -1,7 +1,7 @@
 <?php
 
 /*
- PHBjson v0.0.1
+ PHBjson v0.1.0
  Copyright 2016 Alberto Bettin
  Released under the MIT license
 */
