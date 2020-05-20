@@ -1,18 +1,19 @@
 <?php
 
 /*
- PHBjson v0.1.0
- Copyright 2016 Alberto Bettin
- Released under the MIT license
-*/
-
+  PHBjson v0.0.1
+  Copyright 2016 Alberto Bettin
+  Released under the MIT license
+ */
 
 class PHBjson implements ArrayAccess, Iterator, Countable {
 
     private $_obj;
     private $_is_valid;
+    
+    private $FOO_NULL_VALUE = NULL;
 
-    public function __construct(&$json_obj = '') {
+    public function __construct($json_obj = '') {
         switch (gettype($json_obj)) {
             case 'array':
                 $this->_is_valid = true;
@@ -20,7 +21,7 @@ class PHBjson implements ArrayAccess, Iterator, Countable {
                 break;
             default :
                 $parse = json_decode($json_obj, TRUE);
-                
+
                 if ($this->_is_valid = is_array($parse)) {
                     $this->_obj = $parse;
                 } else {
@@ -30,14 +31,18 @@ class PHBjson implements ArrayAccess, Iterator, Countable {
         $this->rewind();
     }
 
-    public function getValue($field) {
+    public function &getValue($field) {
         if (!$this->isValidValue($field)) {
-            return NULL;
+            return $this->FOO_NULL_VALUE;
         }
         if (isset($this->_obj[$field]) && is_array($this->_obj[$field])) {
-            return new PHBjson($this->_obj[$field]);
+            $obj = new PHBjson();
+            $obj->__setInternalObject($this->_obj[$field]);
+            return $obj;
         }
-        return $this->_obj[$field];
+        $el = $this->_obj[$field];
+
+        return $el;
     }
 
     public function isValidValue($field) {
@@ -110,21 +115,28 @@ class PHBjson implements ArrayAccess, Iterator, Countable {
     public function offsetGet($offset) {
         return $this->getValue($offset);
     }
-    
+
+    public function __setInternalObject(&$obj) {
+        $this->_is_valid = true;
+        $this->_obj = &$obj;
+        $this->rewind();
+    }
+
     // oblect access overwrite
+
 
     public function __set($field, $value) {
         $this->setValue($field, $value);
     }
-    
-    public function __get($name) {
+
+    public function &__get($name) {
         return $this->getValue($name);
     }
-    
+
     // loop
-    
+
     private $position = 0;
-    
+
     public function rewind() {
         $this->position = count($this->_obj) > 0 ? array_keys($this->_obj)[0] : 0;
     }
@@ -140,16 +152,16 @@ class PHBjson implements ArrayAccess, Iterator, Countable {
     public function next() {
         $keys = array_keys($this->_obj);
         $last_index = array_search($this->position, $keys);
-        $this->position = ($last_index  +1 )< count($keys) ? $keys[$last_index + 1] : -1;
+        $this->position = ($last_index + 1 ) < count($keys) ? $keys[$last_index + 1] : -1;
     }
 
     public function valid() {
         return $this->isValidValue($this->position);
     }
-    
+
     //count
     public function count() {
-        return count( $keys = array_keys($this->_obj));
+        return count($keys = array_keys($this->_obj));
     }
 
 }
