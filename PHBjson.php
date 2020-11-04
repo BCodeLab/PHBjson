@@ -191,11 +191,6 @@ class PHBjson implements ArrayAccess, Iterator, Countable {
      * Implementing iterable interface 
      * -------------------------------------------------------------------------
      */
-
-    /**
-     *
-     * @var type 
-     */
     public function rewind() {
         $this->position = count($this->_obj) > 0 ? array_keys($this->_obj)[0] : 0;
     }
